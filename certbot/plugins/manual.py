@@ -143,15 +143,21 @@ when it receives a TLS ClientHello with the SNI extension set to
         else:
             perform_achall = self._perform_achall_manually
 
+        # hook scripts can utilize information about our progress
+        batch_info = {'len': len(achalls),
+                      'idx': None,
+                      }
+
         responses = []
-        for achall in achalls:
+        for (idx, achall) in enumerate(achalls):
+            batch_info['idx'] = idx  # update the idx
             if isinstance(achall.chall, challenges.TLSSNI01):
                 # Make a new ManualTlsSni01 instance for each challenge
                 # because the manual plugin deals with one challenge at a time.
                 self.tls_sni_01 = ManualTlsSni01(self)
                 self.tls_sni_01.add_chall(achall)
                 self.tls_sni_01.perform()
-            perform_achall(achall)
+            perform_achall(achall, batch_info=batch_info)
             responses.append(achall.response(achall.account_key))
         return responses
 
@@ -169,9 +175,14 @@ when it receives a TLS ClientHello with the SNI extension set to
             else:
                 raise errors.PluginError('Must agree to IP logging to proceed')
 
-    def _perform_achall_with_script(self, achall):
+    def _perform_achall_with_script(self, achall, batch_info=None):
         env = dict(CERTBOT_DOMAIN=achall.domain,
                    CERTBOT_VALIDATION=achall.validation(achall.account_key))
+
+        if batch_info:
+            env['CERTBOT_BATCH_LEN'] = str(batch_info['len'])
+            env['CERTBOT_BATCH_IDX'] = str(batch_info['idx'])
+
         if isinstance(achall.chall, challenges.HTTP01):
             env['CERTBOT_TOKEN'] = achall.chall.encode('token')
         else:
@@ -191,7 +202,7 @@ when it receives a TLS ClientHello with the SNI extension set to
         env['CERTBOT_AUTH_OUTPUT'] = out.strip()
         self.env[achall] = env
 
-    def _perform_achall_manually(self, achall):
+    def _perform_achall_manually(self, achall, batch_info=None):
         validation = achall.validation(achall.account_key)
         if isinstance(achall.chall, challenges.HTTP01):
             msg = self._HTTP_INSTRUCTIONS.format(
