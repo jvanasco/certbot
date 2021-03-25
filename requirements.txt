@@ -2,6 +2,10 @@
 -r acme/readthedocs.org.requirements.txt
 -r certbot/local-oldest-requirements.txt
 -r certbot/readthedocs.org.requirements.txt
+-r tools/certbot_constraints.txt
+-r tools/dev_constraints.txt
+-r tools/oldest_constraints.txt
+-r tools/pipstrap_constraints.txt
 -r certbot-apache/readthedocs.org.requirements.txt
 -r certbot-dns-cloudflare/local-oldest-requirements.txt
 -r certbot-dns-cloudflare/readthedocs.org.requirements.txt
@@ -32,8 +36,3 @@
 -r certbot-dns-sakuracloud/local-oldest-requirements.txt
 -r certbot-dns-sakuracloud/readthedocs.org.requirements.txt
 -r certbot-nginx/local-oldest-requirements.txt
--r certbot-nginx/readthedocs.org.requirements.txt
--r tools/certbot_constraints.txt
--r tools/dev_constraints.txt
--r tools/oldest_constraints.txt
--r tools/pipstrap_constraints.txt
