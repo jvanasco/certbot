@@ -16,6 +16,7 @@ from typing import Sequence
 from typing import Set
 from typing import Tuple
 from typing import Union
+import warnings
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -67,6 +68,10 @@ class _DefaultCertSelection:
         self.certs = certs
 
     def __call__(self, connection: SSL.Connection) -> Optional[_KeyAndCert]:
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         server_name = connection.get_servername()
         if server_name:
             return self.certs.get(server_name, None)
@@ -99,6 +104,10 @@ class SSLSocket:  # pylint: disable=too-few-public-methods
             ]
         ] = None,
     ) -> None:
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         self.sock = sock
         self.alpn_selection = alpn_selection
         self.method = method

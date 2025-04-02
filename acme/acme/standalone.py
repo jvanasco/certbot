@@ -15,6 +15,7 @@ from typing import Optional
 from typing import Set
 from typing import Tuple
 from typing import Type
+import warnings
 
 from OpenSSL import SSL
 
@@ -47,6 +48,10 @@ class TLSServer(socketserver.TCPServer):
     def _cert_selection(self, connection: SSL.Connection
                         ) -> Optional[crypto_util._KeyAndCert]:  # pragma: no cover
         """Callback selecting certificate for connection."""
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         server_name = connection.get_servername()
         if server_name:
             return self.certs.get(server_name, None)
@@ -154,6 +159,10 @@ class TLSALPN01Server(TLSServer, ACMEServerMixin):
                  certs: List[crypto_util._KeyAndCert],
                  challenge_certs: Mapping[bytes, crypto_util._KeyAndCert],
                  ipv6: bool = False) -> None:
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         # We don't need to implement a request handler here because the work
         # (including logging) is being done by wrapped socket set up in the
         # parent TLSServer class.
@@ -170,6 +179,10 @@ class TLSALPN01Server(TLSServer, ACMEServerMixin):
         # Therefore, currently we always return challenge cert, and terminate
         # handshake in alpn_selection() if ALPN protos are not what we expect.
         # [0] https://github.com/openssl/openssl/issues/4952
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         server_name = connection.get_servername()
         if server_name:
             logger.debug("Serving challenge cert for server name %s", server_name)

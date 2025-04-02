@@ -14,6 +14,7 @@ from typing import Tuple
 from typing import Type
 from typing import Union
 from typing import TYPE_CHECKING
+import warnings
 
 from acme import challenges
 from acme import standalone as acme_standalone
@@ -57,6 +58,10 @@ class ServerManager:
     def __init__(self, certs: Mapping[bytes, _KeyAndCert],
                  http_01_resources: Set[acme_standalone.HTTP01RequestHandler.HTTP01Resource]
                  ) -> None:
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         self._instances: Dict[int, acme_standalone.HTTP01DualNetworkedServers] = {}
         self.certs = certs
         self.http_01_resources = http_01_resources
