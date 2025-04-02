@@ -13,6 +13,7 @@ from typing import Tuple
 from typing import Type
 from typing import TypeVar
 from typing import Union
+import warnings
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
@@ -431,6 +432,10 @@ class TLSALPN01Response(KeyAuthorizationChallengeResponse):
         :rtype: `tuple` of `x509.Certificate` and `OpenSSL.crypto.PKey`
 
         """
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         if key is None:
             key = crypto.PKey()
             key.generate_key(crypto.TYPE_RSA, bits)
@@ -557,6 +562,10 @@ class TLSALPN01(KeyAuthorizationChallenge):
         :rtype: `tuple` of `x509.Certificate` and `OpenSSL.crypto.PKey`
 
         """
+        warnings.warn('`pyopenssl.crypto` objects are deprecated '
+                      'in favor of cryptography objects. This function will '
+                      'use the new objects in a future release.',
+                      DeprecationWarning, stacklevel=2)
         # TODO: Remove cast when response() is generic.
         return cast(TLSALPN01Response, self.response(account_key)).gen_cert(
             key=kwargs.get('cert_key'),
