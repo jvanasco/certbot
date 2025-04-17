@@ -337,7 +337,7 @@ class ClientV2:
             try:
                 # guard against a server incorrectly sending timestamp, not secs
                 retry_after_secs = int(_retry_after_secs)
-            except:
+            except ValueError:
                 pass
 
         return random_time, retry_after_secs
